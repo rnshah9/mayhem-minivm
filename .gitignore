@@ -26,5 +26,5 @@ minivm.wasm
 *.dbg
 cosmo
 data
-jit
 dis
+asmin

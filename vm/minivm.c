@@ -68,7 +68,7 @@ vm_obj_t vm_global_from(size_t len, const char **args) {
   return vm_obj_ptr(global);
 }
 
-int vm_table_opt(size_t nops, vm_opcode_t *ops, void *const *const ptrs) {
+int vm_table_opt(size_t nops, vm_instr_t *ops, void *const *const ptrs) {
   for (size_t i = 0; i < nops; ++i) {
     vm_number_t op = ops[i].arg;
     ops[i].op = ptrs[op];
@@ -205,7 +205,7 @@ int vm_table_opt(size_t nops, vm_opcode_t *ops, void *const *const ptrs) {
 }
 
 /// VM hot loop
-void vm_run_from(size_t nops, vm_opcode_t *ops, vm_obj_t globals) {
+void vm_run_from(size_t nops, vm_instr_t *ops, vm_obj_t globals) {
   // our dear jump table
   static void *const ptrs[] = {
       [VM_OPCODE_EXIT] = &&do_exit,       [VM_OPCODE_REG] = &&do_store_reg,
@@ -646,7 +646,7 @@ do_bltei : {
 }
 
 /// allocates locals for the program and calls the vm hot loop
-void vm_run(size_t nops, vm_opcode_t *ops, size_t nargs, const char **args) {
+void vm_run(size_t nops, vm_instr_t *ops, size_t nargs, const char **args) {
   vm_run_from(nops, ops, vm_global_from(nargs, args));
 }
 
@@ -661,7 +661,7 @@ int main(int argc, const char **argv) {
     return 2;
   }
   size_t nalloc = 1 << 8;
-  vm_opcode_t *ops = malloc(sizeof(vm_opcode_t) * nalloc);
+  vm_instr_t *ops = malloc(sizeof(vm_instr_t) * nalloc);
   size_t nops = 0;
   size_t size;
   for (;;) {
@@ -672,7 +672,7 @@ int main(int argc, const char **argv) {
     }
     if (nops + 1 >= nalloc) {
       nalloc *= 4;
-      ops = realloc(ops, sizeof(vm_opcode_t) * nalloc);
+      ops = realloc(ops, sizeof(vm_instr_t) * nalloc);
     }
     ops[nops++].arg = op;
   }
