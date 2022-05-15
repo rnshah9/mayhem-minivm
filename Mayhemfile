@@ -1,0 +1,5 @@
+project: rnshah9/mayhem-minivm
+target: playground
+
+cmds:
+  - cmd: /repo/minivm @@
